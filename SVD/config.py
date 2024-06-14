@@ -3,15 +3,15 @@ import os
 #用于训练模型的文本
 trainDataset="../datasets/train.txt"
 #训练集
-training_set="../datasets/training_set0.9.csv"
+training_set="../datasets/train.csv"
 #验证集
-test_set="../datasets/test_set0.1.csv"
+valid_set="../datasets/valid.csv"
 #测试集（无真值）
 testDataset="../datasets/test.txt"
 itemAttributeDataset="../datasets/itemAttribute.txt"
 NewItemAttributeDataset="../datasets/processed_itemAttribute.csv"
 
-DATA_STATISTICS_FOLDER= './dataStatistics/'
+DATA_STATISTICS_FOLDER= '../data_statistics/'
 # mkdirs
 if not os.path.exists(DATA_STATISTICS_FOLDER):
     os.makedirs(DATA_STATISTICS_FOLDER)

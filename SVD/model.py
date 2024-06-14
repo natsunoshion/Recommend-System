@@ -102,7 +102,11 @@ class SVDModel(object):
         self.overall_train_mean_rating=0.0
         overall_rating_sum=0.0
         self.num_trainingData = 0
+        count = 0
         for train_line in trainSet:
+            if count == 0:
+                count=1
+                continue
             line = train_line.strip()
             if line == "":
                 continue
@@ -135,7 +139,7 @@ class SVDModel(object):
     def train(self):
         print("================ 开始训练 ================")
         print("training_set:",training_set)
-        print("test_set:",test_set)
+        print("valid_set:",valid_set)
         print("LAMBDAUB:",LAMBDAUB)
         print("LAMBDAIB:",LAMBDAIB)
         print("LAMBDAP:",LAMBDAP)
@@ -178,13 +182,13 @@ class SVDModel(object):
             # 每次迭代之后降低学习率，提高正确率，防止因为学习率过高错过正确的值
             self.learning_rate *= decay_factor
             print('RMSE in epoch %d: %f' % (epoch+1, rmse))
-            self.evaluateWithTrain()
+            self.eval_valid()
 
         end=time.time()
         duration=end-start
         print("训练总用时：", "%.6f" % duration, "秒")
 
-        # 将参数保存在文件中，节省后续计算时间
+        # save model
         print('正在保存各个参数...',end='')
 
         # 1. 保存bu
@@ -281,13 +285,11 @@ class SVDModel(object):
 
 
     def linear(self):
-        #1.从已经存储的.dat文件中读取参数
         print("正在读取保存的参数...")
         self.user_bias = []
         self.item_bias = []
         self.P = []
         self.Q = []
-        #按照存储写出的方式读入参数
 
         #1.1 读取UB_VECTOR.dat
         with open(USER_BIAS_VEC, 'rb') as f:
@@ -379,14 +381,18 @@ class SVDModel(object):
         return a * attr1 + b * attr2 + c
 
 
-    def evaluateWithTrain(self):
+    def eval_valid(self):
         print('通过验证集计算RMSE...',end='')
         num_test_data = 0
         rmse = 0.0
-        with open(test_set, 'r') as f:
+        with open(valid_set, 'r') as f:
+            count=0
             for line in f.readlines():
+                if count==0:
+                    count=1
+                    continue
                 if line == "":
-                        continue
+                    continue
                 user_id, item_id, rate_str = line.split(',')
                 u = self.user_dict[int(user_id)]
                 i = self.item_dict[int(item_id)]
@@ -407,10 +413,14 @@ class SVDModel(object):
         rmse = 0.0
         rmse_with_IA = 0.0
 
-        with open(test_set, 'r') as f, open(RESULT_FOLDER+'eval_result.csv', 'w') as resultf:
+        with open(valid_set, 'r') as f, open(RESULT_FOLDER+'eval_result.csv', 'w') as resultf:
+            count=0
             for line in f.readlines():
                 if line == "":
-                        continue
+                    continue
+                if count == 0:
+                    count=1
+                    continue
                 user_id, item_id, rate_str = line.split(',')
                 u = self.user_dict[int(user_id)]
                 i = self.item_dict[int(item_id)]
