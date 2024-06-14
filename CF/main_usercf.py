@@ -25,7 +25,7 @@ if __name__ == '__main__':
         os.makedirs(model_directory)
 
     if is_retrain == 'y':
-        model = UserCF('./datasets/train.txt', './datasets/test.txt', model_directory)
+        model = UserCF('../datasets/train.txt', '../datasets/test.txt', model_directory)
         model.build(model.train_p)
         save_model(model, model_path)
         model.static_analyse()
@@ -37,14 +37,14 @@ if __name__ == '__main__':
         model = load_model(trained_model_path)
         assert model is not None, "Failed to load the trained model!"
         if not model.is_build:
-            model.build('./datasets/train.txt')
+            model.build('../datasets/train.txt')
             model.train()
             save_model(model, model_path)
         elif not model.is_train:
             model.train()
             save_model(model, trained_model_path)
         elif not model.is_test:
-            model.test('./datasets/test.txt')
+            model.test('../datasets/test.txt')
             save_model(model, tested_model_path)
         else:
             assert False, "Unexpected state: Model is already built, trained, and tested."
