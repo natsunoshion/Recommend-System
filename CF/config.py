@@ -1,7 +1,7 @@
 import os
 
 Alg_information = 'Collaborative Filtering'
-Data_folder = '../Data'
+Data_folder = '../Dataset'
 Save_path = './Save'
 print_per = 7
 save_per = 9

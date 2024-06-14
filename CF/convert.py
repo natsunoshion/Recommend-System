@@ -1,8 +1,3 @@
-# !/usr/bin/env python
-# -*- coding: utf-8 -*-
-# cython:language_level=3
-# @Time    : 2023/5/27 15:39
-# @File    : main.py
 import gc
 import os
 import csv

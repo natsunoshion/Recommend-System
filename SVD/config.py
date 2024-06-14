@@ -1,15 +1,15 @@
 import os
 
 #用于训练模型的文本
-trainDataset="./data/train.txt"
+trainDataset="../Dataset/train.txt"
 #训练集
-training_set="./data/training_set0.9.csv"
+training_set="../Dataset/training_set0.9.csv"
 #验证集
-test_set="./data/test_set0.1.csv"
+test_set="../Dataset/test_set0.1.csv"
 #测试集（无真值）
-testDataset="./data/test.txt"
-itemAttributeDataset="./data/itemAttribute.txt"
-NewItemAttributeDataset="./data/processed_itemAttribute.csv"
+testDataset="../Dataset/test.txt"
+itemAttributeDataset="../Dataset/itemAttribute.txt"
+NewItemAttributeDataset="../Dataset/processed_itemAttribute.csv"
 
 DATA_STATISTICS_FOLDER= './dataStatistics/'
 # mkdirs
