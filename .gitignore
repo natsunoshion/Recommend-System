@@ -1,0 +1,6 @@
+CF/experiments/
+SVD/middleParameters/
+**/__pycache__/
+datasets/
+data_statistics/
+*.pyc

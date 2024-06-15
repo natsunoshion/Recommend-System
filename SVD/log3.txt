@@ -1,0 +1,41 @@
+================ 开始训练 ================
+training_set: ../datasets/train.csv
+valid_set: ../datasets/valid.csv
+LAMBDAUB: 0.01
+LAMBDAIB: 0.01
+LAMBDAP: 0.007
+LAMBDAQ: 0.007
+FACTORS: 100
+learning_rate: 0.002
+decay: 0.5
+RMSE in epoch 1: 28.477526
+通过验证集计算RMSE...验证集上的RMSE为: 30.551481239370805
+RMSE in epoch 2: 23.341872
+通过验证集计算RMSE...验证集上的RMSE为: 27.25366061634132
+RMSE in epoch 3: 20.222744
+通过验证集计算RMSE...验证集上的RMSE为: 26.043118162205474
+RMSE in epoch 4: 18.368739
+通过验证集计算RMSE...验证集上的RMSE为: 25.652992671135983
+RMSE in epoch 5: 17.427750
+通过验证集计算RMSE...验证集上的RMSE为: 25.5290259204069
+RMSE in epoch 6: 16.954758
+通过验证集计算RMSE...验证集上的RMSE为: 25.4832676107076
+RMSE in epoch 7: 16.716854
+通过验证集计算RMSE...验证集上的RMSE为: 25.464664343488405
+RMSE in epoch 8: 16.597286
+通过验证集计算RMSE...验证集上的RMSE为: 25.456795811111174
+RMSE in epoch 9: 16.537467
+通过验证集计算RMSE...验证集上的RMSE为: 25.453210819543166
+RMSE in epoch 10: 16.507574
+通过验证集计算RMSE...验证集上的RMSE为: 25.451502801697405
+训练总用时： 2124.572094 秒
+正在保存各个参数...保存完成
+Train time:  2136.451967 seconds
+================  通过验证集计算RMSE   ================
+正在读取保存的参数...
+验证集上的RMSE为: 25.451502801697405
+利用itemattribute的RMSE为: 25.41962048985036
+Evaluation time:  30.913003 seconds
+开始对test.txt的预测...
+Prediction time:  1.191904 seconds
+Model training Memory usage(it indicates the maximum memory that a process used): 5461.015625 MB
