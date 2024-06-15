@@ -4,8 +4,8 @@ import csv
 import time
 import pandas as pd
 import psutil as psutil
-# import dask.dataframe as dd
 
+# import dask.dataframe as dd
 
 
 def main(df, path):
@@ -14,20 +14,20 @@ def main(df, path):
     #     # 不存在则创建
     #     os.mkdir(path)
     # 获取user不重复值
-    users_list = df['user'].unique()
-    with open('Data/train_train.txt', 'w', encoding='utf-8') as f:
+    users_list = df["user"].unique()
+    with open("Data/train_train.txt", "w", encoding="utf-8") as f:
         for user in users_list:
             # 获取每个user的数据
-            user_df = df[df['user'] == user]
+            user_df = df[df["user"] == user]
             # 获取行数
             user_df_len = len(user_df)
-            f.write(f'{user}|{user_df_len}\n')
+            f.write(f"{user}|{user_df_len}\n")
             # 遍历user_df的每一行，获取item和score
             for index, row in user_df.iterrows():
-                item = row['item']
-                score = row['score']
+                item = row["item"]
+                score = row["score"]
                 # 在文件最后一行写入item和score
-                f.write(f'{item} {score}\n')
+                f.write(f"{item} {score}\n")
             # # 新建txt文件
             # with open(f'{path}/{user}.txt', 'w', encoding='utf-8') as f:
             #     # 在第一行写入userid|行数
@@ -42,16 +42,16 @@ def main(df, path):
 
 def read_csv(filename):
     data = {}
-    with open(filename, 'r', encoding='utf-8') as file:
+    with open(filename, "r", encoding="utf-8") as file:
         reader: csv.DictReader = csv.DictReader(file)
         for row in reader:
-            user = row['user']
-            item = row['item']
-            score = row['score']
+            user = row["user"]
+            item = row["item"]
+            score = row["score"]
             if user in data:
-                data[user].append({'item': item, 'score': score})
+                data[user].append({"item": item, "score": score})
             else:
-                data[user] = [{'item': item, 'score': score}]
+                data[user] = [{"item": item, "score": score}]
     return data
 
 
@@ -64,15 +64,15 @@ def main_dict(df, path):
     # 读取CSV文件数据并转换为字典
     data = read_csv(df)
 
-    with open(f'Data/{path}.txt', 'w', encoding='utf-8') as f:
+    with open(f"Data/{path}.txt", "w", encoding="utf-8") as f:
         for user, user_data in data.items():
             user_df_len = len(user_data)
-            
-            f.write(f'{user}|{user_df_len}\n')
+
+            f.write(f"{user}|{user_df_len}\n")
             for item_data in user_data:
-                item = item_data['item']
-                score = item_data['score']
-                f.write(f'{item} {score}\n')
+                item = item_data["item"]
+                score = item_data["score"]
+                f.write(f"{item} {score}\n")
     # 遍历用户数据字典，将数据写入对应的txt文件
     # for user, user_data in data.items():
     #     user_df_len = len(user_data)
@@ -142,7 +142,7 @@ print("======dict======")
 start_memory = psutil.Process().memory_info().rss / 1024 / 1024
 start_time = time.perf_counter()
 # main_dict('Data/train_train.csv', 'train_train')
-main_dict('Data/train_test.csv', 'train_test')
+main_dict("Data/train_test.csv", "train_test")
 end_memory = psutil.Process().memory_info().rss / 1024 / 1024
 end_time = time.perf_counter()
 execution_time = end_time - start_time

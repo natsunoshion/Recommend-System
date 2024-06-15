@@ -6,6 +6,7 @@ import numpy as np
 import logging
 from tqdm import tqdm
 from sklearn.metrics import mean_squared_error
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 class UserCF:
@@ -33,6 +34,7 @@ class UserCF:
         self.model_p = model_p
         self.topn = 500
         self.thresh = 0
+        self.num_threads = 8  # Number of threads in the pool
 
     def static_analyse(self):
         # use after build
@@ -78,54 +80,57 @@ class UserCF:
         self.total_sim = int((pow(len(self.user_avg), 2) - len(self.user_avg)) / 2)
         logging.info("Build Rating Matrix Success!")
 
+    def calculate_similarity(self, i, j):
+        len_i = len(self.user_matrix[i])
+        temp1 = 0
+        temp2 = np.sum(
+            [
+                math.pow(self.user_matrix[i][item] - self.user_avg[i], 2)
+                for item in self.user_matrix[i]
+            ]
+        )
+        temp3 = np.sum(
+            [
+                math.pow(self.user_matrix[j][item] - self.user_avg[j], 2)
+                for item in self.user_matrix[j]
+            ]
+        )
+        if len_i <= len(self.user_matrix[j]):
+            for item in self.user_matrix[i]:
+                if self.user_matrix[j].get(item) is not None:
+                    m1 = self.user_matrix[i][item] - self.user_avg[i]
+                    m2 = self.user_matrix[j][item] - self.user_avg[j]
+                    temp1 += m1 * m2
+        else:
+            for item in self.user_matrix[j]:
+                if self.user_matrix[i].get(item) is not None:
+                    m1 = self.user_matrix[i][item] - self.user_avg[i]
+                    m2 = self.user_matrix[j][item] - self.user_avg[j]
+                    temp1 += m1 * m2
+
+        if temp2 == 0 or temp3 == 0:
+            return i, j, 0
+        else:
+            return i, j, temp1 / (math.sqrt(temp2 * temp3))
+
     def train(self):
         start = time.time()
         logging.info(f"Start train at {time.asctime(time.localtime(start))}")
         self.sim_matrix_user = [{} for _ in range(len(self.user_avg))]
         self.now_size = 0
         self.mid = int(len(self.user_avg) / 2)
-        count = 0
-        for i in tqdm(range(len(self.user_avg)), desc="Training Progress"):
-            len_i = len(self.user_matrix[i])
-            temp2 = np.sum(
-                [
-                    math.pow(self.user_matrix[i][item] - self.user_avg[i], 2)
-                    for item in self.user_matrix[i]
-                ]
-            )
-            for j in range(i + 1, len(self.user_avg)):
-                len_j = len(self.user_matrix[j])
-                temp1 = 0
-                temp3 = np.sum(
-                    [
-                        math.pow(self.user_matrix[j][item] - self.user_avg[j], 2)
-                        for item in self.user_matrix[j]
-                    ]
-                )
-                if len_i <= len_j:
-                    for item in self.user_matrix[i]:
-                        if self.user_matrix[j].get(item) is not None:
-                            m1 = self.user_matrix[i][item] - self.user_avg[i]
-                            m2 = self.user_matrix[j][item] - self.user_avg[j]
-                            temp1 += m1 * m2
-                        else:
-                            continue
-                else:
-                    for item in self.user_matrix[j]:
-                        if self.user_matrix[i].get(item) is not None:
-                            m1 = self.user_matrix[i][item] - self.user_avg[i]
-                            m2 = self.user_matrix[j][item] - self.user_avg[j]
-                            temp1 += m1 * m2
-                        else:
-                            continue
 
-                if temp2 == 0 or temp3 == 0:
-                    self.sim_matrix_user[i][j] = 0
-                    self.sim_matrix_user[j][i] = 0
-                else:
-                    self.sim_matrix_user[i][j] = temp1 / (math.sqrt(temp2 * temp3))
-                    self.sim_matrix_user[j][i] = self.sim_matrix_user[i][j]
-                count += 1
+        with ThreadPoolExecutor(max_workers=self.num_threads) as executor:
+            futures = []
+            for i in range(len(self.user_avg)):
+                for j in range(i + 1, len(self.user_avg)):
+                    futures.append(executor.submit(self.calculate_similarity, i, j))
+            for future in tqdm(
+                as_completed(futures), total=len(futures), desc="Training Progress"
+            ):
+                i, j, similarity = future.result()
+                self.sim_matrix_user[i][j] = similarity
+                self.sim_matrix_user[j][i] = similarity
 
         for i in range(len(self.user_avg)):
             self.sim_matrix_user[i] = dict(
